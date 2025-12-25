@@ -7,6 +7,4 @@ export const ai = genkit({
   plugins: [
     googleAI(),
   ],
-  // 在生产环境中允许调用模型
-  allowCycles: true,
 });
