@@ -54,8 +54,21 @@ const askFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async (input) => {
-    const { output } = await prompt(input);
-    return output!;
+    // This is a robust error handling block for the server-side flow.
+    try {
+      if (!process.env.GEMINI_API_KEY) {
+        throw new Error('GEMINI_API_KEY is not configured on the server.');
+      }
+      const { output } = await prompt(input);
+      if (!output) {
+        throw new Error('AI returned an empty response.');
+      }
+      return output;
+    } catch (e: any) {
+      console.error('[askMedicalQuestionFlow Error]', e);
+      // Return the specific error message as a string to be displayed in the UI
+      return `[SERVER_ERROR] Failed to execute AI flow: ${e.message || 'An unknown error occurred.'}`;
+    }
   }
 );
 
@@ -63,5 +76,11 @@ const askFlow = ai.defineFlow(
 export async function askMedicalQuestion(
   input: AskMedicalQuestionInput
 ): Promise<AskMedicalQuestionOutput> {
-  return askFlow(input);
+  // This outer try-catch handles any errors that might occur outside the flow itself.
+  try {
+    return await askFlow(input);
+  } catch (e: any) {
+    console.error('[askMedicalQuestion Handler Error]', e);
+    return `[HANDLER_ERROR] An unexpected error occurred: ${e.message || 'Unknown error.'}`;
+  }
 }
