@@ -39,11 +39,13 @@ export default function AIChat() {
       startTransition(() => {
         setMessages([...newMessages, modelMessage]);
       });
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      // 将详细错误信息展示给用户
+      const errorMessageContent = `抱歉，AI顾问暂时无法回答，请稍后再试。\n\n错误详情: ${e.message || '未知错误'}`;
       const errorMessage: Message = {
         role: 'model',
-        content: '抱歉，AI顾问暂时无法回答，请稍后再试。',
+        content: errorMessageContent,
       };
       startTransition(() => {
         setMessages([...newMessages, errorMessage]);
