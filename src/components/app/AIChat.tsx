@@ -31,18 +31,22 @@ export default function AIChat() {
     setIsLoading(true);
 
     try {
+      // This is a more robust way to call a server action and catch errors
       const result = await askMedicalQuestion({
         question: input,
         history: messages,
       });
+
       const modelMessage: Message = { role: 'model', content: result };
       startTransition(() => {
         setMessages([...newMessages, modelMessage]);
       });
     } catch (e: any) {
-      console.error(e);
-      // 将详细错误信息展示给用户
-      const errorMessageContent = `抱歉，AI顾问暂时无法回答，请稍后再试。\n\n错误详情: ${e.message || '未知错误'}`;
+      console.error('Caught a server component error:', e);
+      // Expose the hidden server error details for debugging
+      const errorMessageContent = `抱歉，AI顾问暂时无法回答，请稍后再试。\n\n错误详情: ${
+        e.message || '未知错误'
+      }. Digest: ${e.digest || 'N/A'}`;
       const errorMessage: Message = {
         role: 'model',
         content: errorMessageContent,
