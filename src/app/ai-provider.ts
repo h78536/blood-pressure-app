@@ -1,4 +1,3 @@
-'use server';
 
 import { getRequestContext } from '@cloudflare/next-on-pages';
 
