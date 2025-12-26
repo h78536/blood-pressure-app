@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@cloudflare/next-on-pages": "1.11.0",
+    "@google/generative-ai": "^0.15.0",
     "@radix-ui/react-slot": "1.1.0",
     "class-variance-authority": "0.7.0",
     "clsx": "2.1.1",
@@ -19,9 +20,9 @@
     "react-dom": "18.3.1",
     "tailwind-merge": "2.4.0",
     "tailwindcss-animate": "1.0.7",
+    "zod": "^3.23.8",
     "genkit": "*",
-    "@genkit-ai/google-genai": "*",
-    "zod": "^3.23.8"
+    "@genkit-ai/google-genai": "*"
   },
   "devDependencies": {
     "@types/node": "20.14.9",
