@@ -1,4 +1,4 @@
-:// This file is used to declare custom environment variables for Cloudflare
+// This file is used to declare custom environment variables for Cloudflare
 // It allows TypeScript to recognize properties attached at runtime, like AI bindings.
 
 import type { AI } from './app/ai-provider';
