@@ -10,7 +10,6 @@ const Dialog = ({ open, onOpenChange, title, children }: { open: boolean, onOpen
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60" onClick={() => onOpenChange(false)}>
-      {/* 修改这里：在小屏幕上，对话框距离顶部更近，为键盘留出空间 */}
       <div 
         className="fixed inset-x-4 top-10 bottom-10 z-50 mx-auto grid w-auto max-w-lg gap-4 border bg-card p-6 shadow-lg sm:rounded-lg sm:bottom-auto" 
         onClick={(e) => e.stopPropagation()}
@@ -37,7 +36,7 @@ export default function Header({ readings }: { readings: BloodPressureReading[] 
     <header className="bg-primary/20 shadow-sm sticky top-0 z-20">
       <div className="container mx-auto flex items-center justify-between p-4">
         <div className="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.0 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.0 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.7-1 2.1 4.4L15 12h5.78"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.7-1 2.1 4.4L15 12h5.78"/></svg>
           <h1 className="text-xl md:text-2xl font-bold text-foreground">
             血压追踪器
           </h1>

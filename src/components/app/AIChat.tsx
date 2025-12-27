@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { askMedicalQuestion } from '@/ai/flows/ask-medical-question';
+import { askMedicalQuestion } from '@/app/actions';
 import { Send } from 'lucide-react';
 import type { BloodPressureReading } from '@/lib/types';
 
@@ -33,7 +33,7 @@ export default function AIChat({ readings }: { readings: BloodPressureReading[] 
     const userMessage: Message = { role: 'user', content: input };
     setMessages((prev) => [...prev, userMessage]);
     
-    // Format the readings data into a string for the prompt
+    // Take the last 20 readings as context
     const readingsContext = readings.length > 0
       ? '用户的血压记录如下：\n' + readings.slice(0, 20).map(r => 
           `- ${new Date(r.timestamp).toLocaleString()}: ${r.systolic}/${r.diastolic} mmHg, 脉搏 ${r.pulse} bpm`
@@ -46,17 +46,19 @@ export default function AIChat({ readings }: { readings: BloodPressureReading[] 
     setIsLoading(true);
 
     try {
-      const modelResponse = await askMedicalQuestion({ question, readingsContext });
+      // We are now directly calling the refactored Server Action
+      const modelResponse = await askMedicalQuestion(question, readingsContext);
       const modelMessage: Message = { role: 'model', content: modelResponse };
       setMessages((prev) => [...prev, modelMessage]);
 
     } catch (e: any) {
-      console.error('AI Flow Error:', e);
+      console.error('AI Action Error:', e);
       const errorMessageContent = `抱歉，AI顾问暂时无法回答。\n\n错误详情: ${e.message}.`;
       const errorMessage: Message = { role: 'model', content: errorMessageContent };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      inputRef.current?.focus();
     }
   };
   
