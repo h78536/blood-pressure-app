@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { askMedicalQuestion } from '@/app/actions';
+import { askMedicalQuestion } from '@/ai/flows/ask-medical-question';
 import { Send } from 'lucide-react';
 import type { BloodPressureReading } from '@/lib/types';
 
@@ -35,23 +35,23 @@ export default function AIChat({ readings }: { readings: BloodPressureReading[] 
     
     // Format the readings data into a string for the prompt
     const readingsContext = readings.length > 0
-      ? '用户的血压记录如下：\n' + readings.map(r => 
+      ? '用户的血压记录如下：\n' + readings.slice(0, 20).map(r => 
           `- ${new Date(r.timestamp).toLocaleString()}: ${r.systolic}/${r.diastolic} mmHg, 脉搏 ${r.pulse} bpm`
         ).join('\n')
       : '用户暂无血压记录。';
     
-    const fullPrompt = `${readingsContext}\n\n如果问题与血压无关，则忽略上述数据。\n用户的问题是：${input}`;
+    const question = input;
 
     setInput('');
     setIsLoading(true);
 
     try {
-      const modelResponse = await askMedicalQuestion(fullPrompt);
+      const modelResponse = await askMedicalQuestion({ question, readingsContext });
       const modelMessage: Message = { role: 'model', content: modelResponse };
       setMessages((prev) => [...prev, modelMessage]);
 
     } catch (e: any) {
-      console.error('Server Action Error:', e);
+      console.error('AI Flow Error:', e);
       const errorMessageContent = `抱歉，AI顾问暂时无法回答。\n\n错误详情: ${e.message}.`;
       const errorMessage: Message = { role: 'model', content: errorMessageContent };
       setMessages((prev) => [...prev, errorMessage]);
