@@ -3,11 +3,9 @@
 import AIChat from './AIChat';
 import type { BloodPressureReading } from '@/lib/types';
 
-
 type AISummaryProps = {
   readings: BloodPressureReading[];
 };
-
 
 export default function AISummary({ readings }: AISummaryProps) {
   // 趋势总结功能暂时禁用，因为它依赖于一个更复杂的设置。
@@ -23,7 +21,8 @@ export default function AISummary({ readings }: AISummaryProps) {
       )}
 
       <div className="flex-1 min-h-0">
-        <AIChat />
+        {/* 确保这里传递 readings 属性 */}
+        <AIChat readings={readings} />
       </div>
     </div>
   );

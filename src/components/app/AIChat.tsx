@@ -5,19 +5,18 @@ import { askMedicalQuestion } from '@/app/actions';
 import { Send } from 'lucide-react';
 import type { BloodPressureReading } from '@/lib/types';
 
-
 type Message = {
   role: 'user' | 'model';
   content: string;
 };
 
-export default function AIChat({ readings }: { readings: BloodPressureReading[] }) {
+// 修改这一行：让 readings 成为可选参数，并设置默认值空数组
+export default function AIChat({ readings = [] }: { readings?: BloodPressureReading[] }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
