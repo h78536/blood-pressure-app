@@ -1,7 +1,5 @@
 'use server';
 
-import { getRequestContext } from '@cloudflare/next-on-pages';
-
 // A type-safe interface for the AI model binding.
 interface AI {
   run(model: string, inputs: { system: string; prompt: string }): Promise<{ response: string }>;
@@ -12,21 +10,19 @@ const systemPrompt = `你是一位专业的、富有同情心的健康顾问。�
 
 export async function askMedicalQuestion(question: string): Promise<string> {
   try {
-    // This is the correct and safe way to get the AI binding within a Server Action.
-    const { env } = getRequestContext();
-    const ai = (env as any).AI as AI;
+    // Correctly access Cloudflare bindings in Next.js.
+    // The `process.env` object is automatically populated with the bindings.
+    const ai = (process.env as any).AI as AI;
 
     if (!ai) {
-      // This case should ideally not be hit if the binding is set up correctly in Cloudflare.
       throw new Error('AI binding is not configured in the Cloudflare environment.');
     }
 
     const response = await ai.run('@cf/meta/llama-3-8b-instruct', {
         system: systemPrompt,
-        prompt: question, // The prompt now directly takes the full question string
+        prompt: question,
     });
 
-    // Ensure we return a string, providing a fallback if the response format is unexpected.
     if (typeof response.response === 'string') {
         return response.response;
     }
@@ -34,7 +30,6 @@ export async function askMedicalQuestion(question: string): Promise<string> {
 
   } catch (error: any) {
     console.error('Error calling Cloudflare AI:', error);
-    // Provide a user-friendly error message back to the frontend.
     return `抱歉，AI服务在处理您的请求时遇到问题。详情: ${error.message}`;
   }
 }
