@@ -1,36 +1,10 @@
+
 'use server';
 
-// A type-safe interface for the AI model binding.
-// This is exported so it can be used in our declaration file (env.d.ts)
-export interface CloudflareAI {
-  run(model: string, inputs: { system: string; prompt: string }): Promise<{ response: string }>;
-}
+// The AI functionality has been temporarily disabled to resolve a build issue.
+// We will restore this feature in a future step.
 
-const systemPrompt = `你是一位专业的、富有同情心的健康顾问。请根据用户的问题，用简体中文提供清晰、易于理解的健康建议。
-你的回答应该是建议性的，而不是诊断性的。始终提醒用户，AI建议不能替代专业医疗意见，如有需要应咨询医生。`;
-
-export async function askMedicalQuestion(question: string): Promise<string> {
-  try {
-    // In Next.js Edge Runtime on Cloudflare, bindings are available on `process.env`.
-    // We cast `process.env` to access our custom AI binding.
-    const { AI } = process.env as any as { AI: CloudflareAI };
-
-    if (!AI) {
-      throw new Error('AI binding is not configured in the Cloudflare environment.');
-    }
-
-    const aiResponse = await AI.run('@cf/meta/llama-3-8b-instruct', {
-      system: systemPrompt,
-      prompt: question,
-    });
-
-    if (typeof aiResponse.response === 'string') {
-      return aiResponse.response;
-    }
-    return '抱歉，AI返回了非预期的格式。';
-
-  } catch (error: any) {
-    console.error('Error calling Cloudflare AI:', error);
-    return `抱歉，AI服务在处理您的请求时遇到问题。详情: ${error.message}`;
-  }
+export async function askMedicalQuestion(question: string, readingsContext: string): Promise<string> {
+  console.log("AI function called with:", question);
+  return "抱歉，AI 助手功能正在维护中，暂时无法回答您的问题。";
 }
