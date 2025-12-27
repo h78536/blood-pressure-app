@@ -1,18 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 移除或注释掉 output: 'export'
-  // output: 'export', 
-  
-  // 改为使用默认的SSG/SSR模式
   trailingSlash: true,
   images: {
     unoptimized: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // 添加basePath（如果需要）
+  // basePath: '',
+  // 禁用类型检查以加快构建
   typescript: {
     ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 }
 
