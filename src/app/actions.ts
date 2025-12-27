@@ -1,7 +1,8 @@
 'use server';
 
 // A type-safe interface for the AI model binding.
-interface AI {
+// This is exported so it can be used in our declaration file (env.d.ts)
+export interface CloudflareAI {
   run(model: string, inputs: { system: string; prompt: string }): Promise<{ response: string }>;
 }
 
@@ -10,21 +11,21 @@ const systemPrompt = `你是一位专业的、富有同情心的健康顾问。�
 
 export async function askMedicalQuestion(question: string): Promise<string> {
   try {
-    // Correctly access Cloudflare bindings in Next.js.
-    // The `process.env` object is automatically populated with the bindings.
-    const ai = (process.env as any).AI as AI;
+    // In Next.js Edge Runtime on Cloudflare, bindings are available on `process.env`.
+    // We cast `process.env` to access our custom AI binding.
+    const { AI } = process.env as any as { AI: CloudflareAI };
 
-    if (!ai) {
+    if (!AI) {
       throw new Error('AI binding is not configured in the Cloudflare environment.');
     }
 
-    const response = await ai.run('@cf/meta/llama-3-8b-instruct', {
-        system: systemPrompt,
-        prompt: question,
+    const aiResponse = await AI.run('@cf/meta/llama-3-8b-instruct', {
+      system: systemPrompt,
+      prompt: question,
     });
 
-    if (typeof response.response === 'string') {
-        return response.response;
+    if (typeof aiResponse.response === 'string') {
+      return aiResponse.response;
     }
     return '抱歉，AI返回了非预期的格式。';
 
