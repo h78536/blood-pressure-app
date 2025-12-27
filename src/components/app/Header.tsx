@@ -37,7 +37,7 @@ export default function Header({ readings }: { readings: BloodPressureReading[] 
     <header className="bg-primary/20 shadow-sm sticky top-0 z-20">
       <div className="container mx-auto flex items-center justify-between p-4">
         <div className="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.7-1 2.1 4.4L15 12h5.78"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.0 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.0 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.7-1 2.1 4.4L15 12h5.78"/></svg>
           <h1 className="text-xl md:text-2xl font-bold text-foreground">
             血压追踪器
           </h1>
@@ -54,7 +54,7 @@ export default function Header({ readings }: { readings: BloodPressureReading[] 
       </div>
        <Dialog open={isAiOpen} onOpenChange={setIsAiOpen} title="AI 助手">
         <div className="p-0 pt-4 h-full">
-            <AIChat />
+            <AIChat readings={readings} />
         </div>
        </Dialog>
     </header>

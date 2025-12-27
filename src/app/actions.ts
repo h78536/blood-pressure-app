@@ -23,7 +23,7 @@ export async function askMedicalQuestion(question: string): Promise<string> {
 
     const response = await ai.run('@cf/meta/llama-3-8b-instruct', {
         system: systemPrompt,
-        prompt: `用户的问题是：${question}`,
+        prompt: question, // The prompt now directly takes the full question string
     });
 
     // Ensure we return a string, providing a fallback if the response format is unexpected.
