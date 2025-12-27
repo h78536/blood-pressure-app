@@ -58,4 +58,3 @@ export default function Header({ readings }: { readings: BloodPressureReading[] 
        </Dialog>
     </header>
   );
-}
