@@ -36,7 +36,7 @@ export default function AIChat({ readings }: { readings: BloodPressureReading[] 
     // Take the last 20 readings as context
     const readingsContext = readings.length > 0
       ? '用户的血压记录如下：\n' + readings.slice(0, 20).map(r => 
-          `- ${new Date(r.timestamp).toLocaleString()}: ${r.systolic}/${r.diastolic} mmHg, 脉搏 ${r.pulse} bpm`
+          `- ${new Date(r.timestamp).toLocaleString('zh-CN')}: ${r.systolic}/${r.diastolic} mmHg, 脉搏 ${r.pulse} bpm`
         ).join('\n')
       : '用户暂无血压记录。';
     

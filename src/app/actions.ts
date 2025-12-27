@@ -1,15 +1,28 @@
 'use server';
 
+// 定义 Cloudflare AI 绑定的接口
 interface CloudflareAI {
   run(model: string, inputs: object): Promise<{ response: string }>;
 }
 
+/**
+ * 调用 Cloudflare AI 模型进行医疗问题咨询。
+ * @param question 用户提出的问题。
+ * @param recentHistory 用户最近的血压读数摘要。
+ * @returns AI 模型的响应字符串。
+ */
 export async function askMedicalQuestion(question: string, recentHistory: string): Promise<string> {
+  // 在 Cloudflare Pages 中，绑定会自动注入到 process.env 中
+  // 检查 AI 绑定是否在环境中可用
   if (!process.env.AI) {
-    throw new Error("AI binding is not configured. Please check your Cloudflare environment settings.");
+    console.error("AI binding is not configured in Cloudflare environment.");
+    return "抱歉，AI 服务未正确配置。请联系管理员。";
   }
 
+  // 将 process.env.AI 强制转换为我们定义的接口类型
   const AI = process.env.AI as unknown as CloudflareAI;
+  
+  // 使用 @cf/mistral/mistral-7b-instruct-v0.1 模型
   const model = '@cf/mistral/mistral-7b-instruct-v0.1'; 
 
   try {
@@ -29,9 +42,10 @@ export async function askMedicalQuestion(question: string, recentHistory: string
     return aiResponse.response || "AI 未返回有效的响应。";
 
   } catch (error: any) {
-    console.error("Error running Cloudflare AI:", error);
+    console.error("Error executing Cloudflare AI model:", error);
+    // 提供更友好的用户错误信息
     if (error.message && error.message.includes('504')) {
-        return "抱歉，AI模型响应超时。请稍后再试。";
+        return "抱歉，AI模型响应超时，请稍后再试。";
     }
     if (error.message && error.message.includes('429')) {
         return "抱歉，AI请求过于频繁，已超出速率限制。请稍等片刻再试。";
