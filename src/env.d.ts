@@ -1,12 +1,3 @@
-// This file is used to declare custom environment variables for Cloudflare
-// It allows TypeScript to recognize properties attached at runtime, like AI bindings.
-
-import type { AI } from './app/ai-provider';
-
-// By declaring this module, we can extend the default CloudflareEnv type
-declare module '@cloudflare/next-on-pages' {
-  // We extend the CloudflareEnv interface to include our AI binding
-  export interface CloudflareEnv {
-    AI: AI;
-  }
-}
+// This file is intentionally left blank.
+// Cloudflare's `getRequestContext` provides environment variables
+// in a way that doesn't require extending the process.env type.

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { BloodPressureReading } from '@/lib/types';
-import AISummary from './AISummary';
+import AIChat from './AIChat';
 import { Sparkles } from 'lucide-react';
 
 const Dialog = ({ open, onOpenChange, title, children }: { open: boolean, onOpenChange: (open: boolean) => void, title: string, children: React.ReactNode }) => {
@@ -12,13 +12,16 @@ const Dialog = ({ open, onOpenChange, title, children }: { open: boolean, onOpen
     <div className="fixed inset-0 z-50 bg-black/60" onClick={() => onOpenChange(false)}>
       {/* 修改这里：在小屏幕上，对话框距离顶部更近，为键盘留出空间 */}
       <div 
-        className="fixed left-4 right-4 top-10 sm:top-16 z-50 mx-auto grid w-auto max-w-lg gap-4 border bg-card p-6 shadow-lg sm:rounded-lg" 
+        className="fixed inset-x-4 top-10 bottom-10 z-50 mx-auto grid w-auto max-w-lg gap-4 border bg-card p-6 shadow-lg sm:rounded-lg sm:bottom-auto" 
         onClick={(e) => e.stopPropagation()}
+        style={{ gridTemplateRows: 'auto 1fr' }}
       >
         <div className="flex flex-col space-y-1.5 text-left">
           <h3 className="text-lg font-semibold leading-none tracking-tight">{title}</h3>
         </div>
-        {children}
+        <div className="overflow-hidden">
+          {children}
+        </div>
          <button onClick={() => onOpenChange(false)} className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
@@ -50,9 +53,8 @@ export default function Header({ readings }: { readings: BloodPressureReading[] 
         </div>
       </div>
        <Dialog open={isAiOpen} onOpenChange={setIsAiOpen} title="AI 助手">
-        {/* 修改这里：限制弹窗内容的高度，使其可以在小屏幕上滚动 */}
-        <div className="p-0 pt-4 max-h-[70vh] sm:max-h-[75vh] overflow-y-auto">
-            <AISummary readings={readings} />
+        <div className="p-0 pt-4 h-full">
+            <AIChat />
         </div>
        </Dialog>
     </header>

@@ -9,8 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@cloudflare/next-on-pages": "1.11.0",
-    "@google/generative-ai": "^0.15.0",
+    "@cloudflare/ai": "^1.1.0",
     "@radix-ui/react-slot": "1.1.0",
     "class-variance-authority": "0.7.0",
     "clsx": "2.1.1",
@@ -19,12 +18,10 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "tailwind-merge": "2.4.0",
-    "tailwindcss-animate": "1.0.7",
-    "zod": "^3.23.8",
-    "genkit": "*",
-    "@genkit-ai/google-genai": "*"
+    "tailwindcss-animate": "1.0.7"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.11.3",
     "@types/node": "20.14.9",
     "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
