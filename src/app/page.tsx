@@ -1,6 +1,7 @@
-"use client";
 
-import { useState } from 'react';
+'use client';
+
+import { useState, useEffect } from 'react';
 import { Home as HomeIcon, LineChart, List, FilePlus } from 'lucide-react';
 import { useBloodPressureData } from '@/hooks/use-blood-pressure-data';
 import Header from '@/components/app/Header';
@@ -8,6 +9,7 @@ import BloodPressureForm from '@/components/app/BloodPressureForm';
 import DailyReadings from '@/components/app/DailyReadings';
 import BloodPressureChart from '@/components/app/BloodPressureChart';
 import ReadingsList from '@/components/app/ReadingsList';
+import PasswordProtect from '@/components/app/PasswordProtect';
 
 type Tab = 'record' | 'today' | 'chart' | 'history';
 
@@ -43,27 +45,29 @@ export default function HomePage() {
   const sortedReadingsForChart = [...readings].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
   return (
-    <div className="flex flex-col h-screen bg-background">
-      <Header readings={readings} />
-      <main className="flex-1 container mx-auto p-4 md:p-6 overflow-y-auto">
-        {activeTab === 'record' && (
-          <div className="max-w-md mx-auto">
-            <BloodPressureForm addReading={addReading} />
-          </div>
-        )}
-        {activeTab === 'today' && <DailyReadings readings={readings} deleteReading={deleteReading}/>}
-        {activeTab === 'chart' && <BloodPressureChart readings={sortedReadingsForChart} />}
-        {activeTab === 'history' && <ReadingsList readings={readings} deleteReading={deleteReading}/>}
-      </main>
+    <PasswordProtect>
+      <div className="flex flex-col h-screen bg-background">
+        <Header readings={readings} />
+        <main className="flex-1 container mx-auto p-4 md:p-6 overflow-y-auto">
+          {activeTab === 'record' && (
+            <div className="max-w-md mx-auto">
+              <BloodPressureForm addReading={addReading} />
+            </div>
+          )}
+          {activeTab === 'today' && <DailyReadings readings={readings} deleteReading={deleteReading}/>}
+          {activeTab === 'chart' && <BloodPressureChart readings={sortedReadingsForChart} />}
+          {activeTab === 'history' && <ReadingsList readings={readings} deleteReading={deleteReading}/>}
+        </main>
 
-      <footer className="sticky bottom-0 bg-background border-t shadow-inner">
-        <div className="container mx-auto p-2 grid grid-cols-4 gap-2">
-          <TabButton id="record" activeTab={activeTab} setActiveTab={setActiveTab} icon={FilePlus} label="记录" />
-          <TabButton id="today" activeTab={activeTab} setActiveTab={setActiveTab} icon={HomeIcon} label="今日" />
-          <TabButton id="chart" activeTab={activeTab} setActiveTab={setActiveTab} icon={LineChart} label="图表" />
-          <TabButton id="history" activeTab={activeTab} setActiveTab={setActiveTab} icon={List} label="历史" />
-        </div>
-      </footer>
-    </div>
+        <footer className="sticky bottom-0 bg-background border-t shadow-inner">
+          <div className="container mx-auto p-2 grid grid-cols-4 gap-2">
+            <TabButton id="record" activeTab={activeTab} setActiveTab={setActiveTab} icon={FilePlus} label="记录" />
+            <TabButton id="today" activeTab={activeTab} setActiveTab={setActiveTab} icon={HomeIcon} label="今日" />
+            <TabButton id="chart" activeTab={activeTab} setActiveTab={setActiveTab} icon={LineChart} label="图表" />
+            <TabButton id="history" activeTab={activeTab} setActiveTab={setActiveTab} icon={List} label="历史" />
+          </div>
+        </footer>
+      </div>
+    </PasswordProtect>
   );
 }
