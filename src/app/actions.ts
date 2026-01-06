@@ -1,55 +1,50 @@
-'use server';
-
-// 定义 Cloudflare AI 绑定的接口
-interface CloudflareAI {
-  run(model: string, inputs: object): Promise<{ response: string }>;
-}
-
-/**
- * 调用 Cloudflare AI 模型进行医疗问题咨询。
- * @param question 用户提出的问题。
- * @param recentHistory 用户最近的血压读数摘要。
- * @returns AI 模型的响应字符串。
- */
+// 替换 askMedicalQuestion 函数
 export async function askMedicalQuestion(question: string, recentHistory: string): Promise<string> {
-  // 在 Cloudflare Pages 中，绑定会自动注入到 process.env 中
-  // 检查 AI 绑定是否在环境中可用
-  if (!process.env.AI) {
-    console.error("AI binding is not configured in Cloudflare environment.");
-    return "抱歉，AI 服务未正确配置。请联系管理员。";
+  const API_KEY = process.env.ZHIPU_API_KEY;
+  
+  if (!API_KEY) {
+    console.error("ZHIPU_API_KEY is not configured");
+    return "AI服务配置有误，请检查API密钥设置。";
   }
 
-  // 将 process.env.AI 强制转换为我们定义的接口类型
-  const AI = process.env.AI as unknown as CloudflareAI;
-  
-  // 使用 @cf/mistral/mistral-7b-instruct-v0.1 模型
-  const model = '@cf/mistral/mistral-7b-instruct-v0.1'; 
-
   try {
-    const aiResponse = await AI.run(model, {
-      messages: [
-        { 
-          role: 'system', 
-          content: '你是一位专业的 AI 健康助手。你的回答应该严谨、富有同情心，并始终提醒用户你的建议不能替代专业医疗意见。请用简体中文回答。在你的回答末尾，你必须包含免责声明：“请注意：我是一个 AI 助手，我的回答不能替代执业医师的专业诊断。请咨询您的医生以获取专业的医疗建议。”' 
-        },
-        { 
-          role: 'user', 
-          content: `用户血压读数摘要: ${recentHistory}\n\n用户问题: "${question}"` 
-        }
-      ]
+    const response = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'glm-4',
+        messages: [
+          { 
+            role: 'system', 
+            content: '你是一位专业的AI健康助手，请用简体中文回答。基于提供的血压数据进行分析，不要编造不存在的信息。在回答末尾添加："请注意：我是一个AI助手，我的回答不能替代执业医师的专业诊断。请咨询您的医生以获取专业的医疗建议。"' 
+          },
+          { 
+            role: 'user', 
+            content: `【血压记录】\n${recentHistory}\n\n【用户问题】\n${question}\n\n请基于上述血压记录回答问题，如果记录中没有某项数据请说明"记录中未显示"。` 
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 1000,
+      }),
     });
 
-    return aiResponse.response || "AI 未返回有效的响应。";
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('智谱API错误:', response.status, errorText);
+      return "AI服务暂时不可用，请稍后重试。";
+    }
+
+    const data = await response.json();
+    return data.choices[0]?.message?.content || "AI未返回有效响应。";
 
   } catch (error: any) {
-    console.error("Error executing Cloudflare AI model:", error);
-    // 提供更友好的用户错误信息
-    if (error.message && error.message.includes('504')) {
-        return "抱歉，AI模型响应超时，请稍后再试。";
+    console.error("智谱AI调用错误:", error);
+    if (error.name === 'AbortError') {
+      return "请求超时，请检查网络连接。";
     }
-    if (error.message && error.message.includes('429')) {
-        return "抱歉，AI请求过于频繁，已超出速率限制。请稍等片刻再试。";
-    }
-    return "抱歉，无法从 AI 模型获取响应。请检查 Cloudflare 上的模型绑定或稍后再试。";
+    return "无法连接到AI服务，请稍后再试。";
   }
 }
